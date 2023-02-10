@@ -6,8 +6,14 @@ var logger = require('morgan');
 var bodyParser = require('body-parser');
 var cors = require('cors')
 
+// 라우터 api
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var postRouter = require('./routes/post');
+
+// utils
+var tokenAuthCheck = require('./util/tokenAuth');
+
 
 var app = express();
 
@@ -30,7 +36,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-
+app.use('/post', tokenAuthCheck, postRouter)
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
