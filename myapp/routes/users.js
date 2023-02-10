@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var db = require('../lib/db');
 var bcrypt = require('bcrypt');
+var newToken = require('../util/token')
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
@@ -56,22 +57,42 @@ router.post('/signup-process', async function(req, res) {
 router.post('/login-process', function(req, res) {
   const post = req.body;
   try {
-    db.query(`SELECT user_password FROM user WHERE user_id=?`,[post.user_id], async function(err, row){
+    db.query(`SELECT * FROM user WHERE user_id=?`,[post.user_id], async function(err, row){
       if(err) {
-        res.status(404).json({
+        res.status(500).json({
+          message: 'DB_ERROR',
+          err
+        })
+      }
+      if(row[0] === undefined) {
+        return res.status(404).json({
           message: 'ID_NOTHING',
           err
         })
       }
       await bcrypt.compare(post.password, row[0].user_password, function(err2, match) {
         if(err2) {
-          res.status(401).json({
-            message: 'PASSWORD_NOT_MATCHED',
+          res.status(500).json({
+            message: 'DECRYPTION_ERROR',
             err2
           })
         }
         if(match) {
-          res.send('THIS_USER_CERTIFICATED')
+          const userData = {
+            userIdx: row[0].id,
+            nickName: row[0].user_name,
+          }
+          const token = newToken.sign(userData).token;
+          console.log('토큰 확인',token);
+          res.status(200).json({
+            message: 'THIS_USER_CERTIFICATED',
+            nickName: row[0].user_name,
+            token: token,
+          })
+        } else {
+          res.status(401).json({
+            message: 'PASSWORD_NOT_MATCHED',
+          })
         }
       })
     })

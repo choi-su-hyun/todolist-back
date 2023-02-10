@@ -1,5 +1,5 @@
 let mysql = require('mysql')
-const dbSettingData = require('./privateData/dbSettingData')
+const dbSettingData = require('../config/dbSettingData')
 
 var db = mysql.createConnection({
     host: 'localhost',
