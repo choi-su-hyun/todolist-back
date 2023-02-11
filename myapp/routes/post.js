@@ -60,7 +60,7 @@ router.get('/edit/:id', function(req, res) {
 })
 
 // update api
-router.put('/edit/:id/update_process', function(req, res) {
+router.put('/edit/:id/update-process', function(req, res) {
     const post = req.body
     db.query(`UPDATE content_list SET title=?, paragraph=? WHERE id=?`,[post.todoTitle, post.todoDetail, req.params.id], function(err, row) {
         if(err) {
