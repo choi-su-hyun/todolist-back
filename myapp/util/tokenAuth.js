@@ -26,14 +26,14 @@ module.exports = async function tokenAuthCheck(req, res, next) {
                 err
               })
         }
-        console.log('row 확인', row)
+        // console.log('row 확인', row)
         if(row[0] === undefined) {
             res.status(500).json({
                 message: 'USER_IS_NOT_FOUND',
               })
         } 
         req.user = row[0]
-        console.log('req.user내용',req.user.id)
+        // console.log('req.user내용',req.user.id)
         next();
     })
 
